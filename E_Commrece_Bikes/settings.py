@@ -154,6 +154,6 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 AUTHENTICATION_BACKENDS =[
-    'accounts.backends.EmailAuthBackend',
+    'accounts.authentication.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
