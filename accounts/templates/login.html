@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<form class="max-w-sm mx-auto" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+        Email</label>
+    <div class="relative">
+        <input type="email" id="email" name="email"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="name@gmail.com">
+    </div>
+
+
+    <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your
+        password</label>
+    <div class="relative">
+        <input type="password" id="email" name="password"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="">
+    </div>
+
+    <button type="submit" class="bg-blue-500 px-3 py-2">Login</button>
+</form>
+
+
+{% endblock %}
