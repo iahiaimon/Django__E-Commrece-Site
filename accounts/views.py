@@ -25,10 +25,14 @@ def user_singup(request):
     if request.method == 'POST':
         form = CustomUserForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit = False)
+            user.is_active = True
+            user.save()
             send_verification_email(request , user)
-            messages.info(request , "A verification mail has been sent to your email address")
-            return ('home')
+            messages.info(request , "A verification email has been sent to your email address")
+            return redirect('home')
+        else:
+            print(form.errors)  # ← this helps debug    
             
     else:
         form = CustomUserForm()
