@@ -73,7 +73,7 @@ def user_login(request):
         else:
             login(request, user)
             messages.success(request, "You have logged in successfully")
-            return "home"
+            return redirect ("home")
 
     return render(request, "login.html")
 
@@ -82,4 +82,4 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     messages.success(request, "You have been logged out successfully")
-    return "login"
+    return redirect("login")
