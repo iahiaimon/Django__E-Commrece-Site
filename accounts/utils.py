@@ -31,7 +31,7 @@ def send_verification_email(request, user):
     )
 
     subject = 'Verify your email'
-    message = render_to_string('emails/verification_email.html', {
+    message = render_to_string('verification_email.html', {
         'user': user,
         'verification_link': verification_link,
     })

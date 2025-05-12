@@ -34,7 +34,7 @@ class CustomUser(AbstractUser):
     phone = models.CharField(max_length=20)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    address = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
