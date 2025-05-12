@@ -36,6 +36,13 @@ def send_verification_email(request, user):
         'verification_link': verification_link,
     })
 
+
+    from_email = settings.EMAIL_HOST_USER 
+    
+    print("Sending email to:", user.email)
+    print("From:", settings.DEFAULT_FROM_EMAIL)
+
+
     # Send the email
     # send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
 
@@ -47,6 +54,11 @@ def send_verification_email(request, user):
         to=[user.email],
     )
     email.content_subtype = 'html'
-    email.send()
+    try:
+        email.send()
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Email failed:", e)
+
 
 

@@ -27,13 +27,13 @@ def user_singup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data["password"])
-            user.is_active = True
             user.save()
             send_verification_email(request, user)
             messages.info(
                 request, "A verification email has been sent to your email address"
             )
-            return redirect("home")
+            
+            return redirect("login")
         else:
             print(form.errors)  # ← this helps debug
 
