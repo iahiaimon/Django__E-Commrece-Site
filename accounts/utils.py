@@ -39,8 +39,8 @@ def send_verification_email(request, user):
 
     from_email = settings.EMAIL_HOST_USER 
     
-    print("Sending email to:", user.email)
-    print("From:", settings.DEFAULT_FROM_EMAIL)
+    # print("Sending email to:", user.email)
+    # print("From:", settings.DEFAULT_FROM_EMAIL)
 
 
     # Send the email

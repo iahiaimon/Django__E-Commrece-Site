@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!-- <div class="container products w-lg">
+    <div class="heading flex space-between">
+        <div class="heading_text">
+            <h1>Keep Clam and Ride Your Bike</h1>
+        </div>
+        <div class="heading_button">
+            <button>More Products</button>
+        </div>
+
+    </div>
+</div> -->
+
+
+<div class="bg-black min-h-screen py-10 px-6 text-white font-sans">
+    <h1 class="text-4xl font-bold text-center mb-10">
+        <span class="text-white">Keep calm</span> <span class="text-yellow-400">and</span> ride your bike
+    </h1>
+
+
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {% for products in product %}
+
+        <!-- Product Card -->
+        <div class="bg-zinc-900 rounded-2xl border border-yellow-400 p-4 flex flex-col justify-between">
+            <!-- Product Image -->
+            {% if products.product_image.first %}
+            <img src="{{ products.product_image.first.image.url }}" alt="{{ products.name }}"
+                class="w-full h-40 object-contain mb-3" />
+            {% else %}
+            <div class="w-full h-40 bg-gray-700 flex items-center justify-center text-gray-300">No Image</div>
+            {% endif %}
+
+
+
+            <!-- Countdown -->
+            <div class="bg-yellow-400 text-black px-4 py-1 rounded-md text-center font-bold mb-2">
+                ⏱ 402 : 21 : 41 : 53
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end space-x-2 mb-2">
+                <button class="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700">🤍</button>
+                <button class="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700">🔁</button>
+                <button class="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700">👁</button>
+            </div>
+
+            <!-- Product Info -->
+            <div class="mb-2">
+                <p class="text-sm text-gray-400">{{ products.category }} </p>
+                <h3 class="font-semibold text-lg">{{ products.name }}</h3>
+                <p class="text-sm text-gray-300 mt-1">{{ products.description }} </p>
+                <p class="text-sm text-gray-300 mt-1">{{ products.stock }} </p>
+            </div>
+
+            <!-- Colors -->
+            <div class="mt-2 mb-2">
+                <p class="text-sm text-gray-400">Color:</p>
+                <div class="flex space-x-2 mt-1">
+                    <span class="w-4 h-4 rounded-full bg-red-600 border"></span>
+                    <span class="w-4 h-4 rounded-full bg-gray-600 border"></span>
+                    <span class="w-4 h-4 rounded-full bg-blue-600 border"></span>
+                </div>
+            </div>
+
+            <!-- Price -->
+            <p class="font-semibold mt-2">$45.00</p>
+
+            <!-- Add to Cart -->
+            <button
+                class="bg-yellow-400 text-black font-semibold w-full mt-3 py-2 rounded-lg hover:bg-yellow-500 flex justify-center items-center gap-2">
+                Add to Cart 🛒
+            </button>
+        </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+
+{% endblock %}

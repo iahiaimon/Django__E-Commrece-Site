@@ -11,15 +11,11 @@ from django.contrib.auth import get_user_model
 from .models import CustomUser
 from .forms import CustomUserForm
 from .utils import send_verification_email
+from products.views import home
 
-from django.conf import settings
+
 
 # Create your views here.
-
-
-def home(request):
-    return render(request, "base.html", {"MEDIA_URL": settings.MEDIA_URL})
-
 
 def user_singup(request):
     if request.method == "POST":

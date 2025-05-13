@@ -17,6 +17,10 @@ class category(models.Model):
         self.slug = slugify(self.name)
         super().save(*args , **keyargs)
 
+    def __str__(self):
+        return f"{self.id}--{self.name}"
+
+
 
 class product(models.Model):
     name = models.CharField(max_length=100)
@@ -37,6 +41,9 @@ class product(models.Model):
     def save(self , *args , **keyargs):
         self.slug = slugify(self.name)
         super().save(*args , **keyargs)
+    
+    def __str__(self):
+        return f"{self.id}--{self.name}"
 
 
 class product_image(models.Model):
