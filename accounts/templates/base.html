@@ -8,7 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} E-Commerce {% endblock %}</title>
 
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <script src="https://unpkg.com/flowbite@latest/dist/flowbite.min.js"></script>
 
 </head>
 
@@ -96,7 +100,7 @@
     <main>
         <div class="">
             {% block content %}
-            
+
             {% endblock %}
         </div>
     </main>

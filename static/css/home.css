@@ -1,0 +1,9 @@
+.product_info{
+    height: 250px;
+    /* overflow: hidden; */
+}
+
+.product_description{
+    height: 160px;
+    overflow: hidden;
+}

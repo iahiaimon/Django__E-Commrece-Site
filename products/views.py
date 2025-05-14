@@ -18,5 +18,6 @@ def home(request):
         'categories': categories,
         "MEDIA_URL": settings.MEDIA_URL,
         "product":products
+        
     }
     return render(request, 'home.html' , context=contex )

@@ -1,85 +1,140 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<!-- <div class="container products w-lg">
-    <div class="heading flex space-between">
-        <div class="heading_text">
-            <h1>Keep Clam and Ride Your Bike</h1>
-        </div>
-        <div class="heading_button">
-            <button>More Products</button>
-        </div>
 
-    </div>
-</div> -->
+<div class="home">
 
+    <div class="carousel">
 
-<div class="bg-black min-h-screen py-10 px-6 text-white font-sans">
-    <h1 class="text-4xl font-bold text-center mb-10">
-        <span class="text-white">Keep calm</span> <span class="text-yellow-400">and</span> ride your bike
-    </h1>
-
-
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {% for products in product %}
-
-        <!-- Product Card -->
-        <div class="bg-zinc-900 rounded-2xl border border-yellow-400 p-4 flex flex-col justify-between">
-            <!-- Product Image -->
-            {% if products.product_image.first %}
-            <img src="{{ products.product_image.first.image.url }}" alt="{{ products.name }}"
-                class="w-full h-40 object-contain mb-3" />
-            {% else %}
-            <div class="w-full h-40 bg-gray-700 flex items-center justify-center text-gray-300">No Image</div>
-            {% endif %}
-
-
-
-            <!-- Countdown -->
-            <div class="bg-yellow-400 text-black px-4 py-1 rounded-md text-center font-bold mb-2">
-                ⏱ 402 : 21 : 41 : 53
-            </div>
-
-            <!-- Buttons -->
-            <div class="flex justify-end space-x-2 mb-2">
-                <button class="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700">🤍</button>
-                <button class="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700">🔁</button>
-                <button class="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700">👁</button>
-            </div>
-
-            <!-- Product Info -->
-            <div class="mb-2">
-                <p class="text-sm text-gray-400">{{ products.category }} </p>
-                <h3 class="font-semibold text-lg">{{ products.name }}</h3>
-                <p class="text-sm text-gray-300 mt-1">{{ products.description }} </p>
-                <p class="text-sm text-gray-300 mt-1">{{ products.stock }} </p>
-            </div>
-
-            <!-- Colors -->
-            <div class="mt-2 mb-2">
-                <p class="text-sm text-gray-400">Color:</p>
-                <div class="flex space-x-2 mt-1">
-                    <span class="w-4 h-4 rounded-full bg-red-600 border"></span>
-                    <span class="w-4 h-4 rounded-full bg-gray-600 border"></span>
-                    <span class="w-4 h-4 rounded-full bg-blue-600 border"></span>
+        <div id="default-carousel" class="relative w-full" data-carousel="slide">
+            <!-- Carousel wrapper -->
+            <div class="relative h-86 overflow-hidden rounded-lg md:h-96">
+                <!-- Item 1 -->
+                <div class="hidden duration-2000 ease-in-out" data-carousel-item>
+                    <img src="/media/Product_Image/royel-enfield-classic-350-1.png" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h h-full
+                        " alt="...">
+                </div>
+                <!-- Item 2 -->
+                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                    <img src="/media/Product_Image/royel-enfield-hunter-350-4.webp" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h h-full
+                        " alt="...">
+                </div>
+                <!-- Item 3 -->
+                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                    <img src="/media/Product_Image/Yamaha_R15_V3-1.jpg" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h h-full
+                        " alt="...">
+                </div>
+                <!-- Item 4 -->
+                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                    <img src="/media/Product_Image/Yamaha_R15M-2.webp" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h h-full
+                        " alt="...">
+                </div>
+                <!-- Item 5 -->
+                <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                    <img src="/media/Product_Image/royel-enfield-classic-350-4.webp" class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h h-full
+                        " alt="...">
                 </div>
             </div>
-
-            <!-- Price -->
-            <p class="font-semibold mt-2">$45.00</p>
-
-            <!-- Add to Cart -->
-            <button
-                class="bg-yellow-400 text-black font-semibold w-full mt-3 py-2 rounded-lg hover:bg-yellow-500 flex justify-center items-center gap-2">
-                Add to Cart 🛒
+            <!-- Slider indicators -->
+            <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
+                <button type="button" class="w-3 h-3 rounded-full" aria-current="true" aria-label="Slide 1"
+                    data-carousel-slide-to="0"></button>
+                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 2"
+                    data-carousel-slide-to="1"></button>
+                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 3"
+                    data-carousel-slide-to="2"></button>
+                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 4"
+                    data-carousel-slide-to="3"></button>
+                <button type="button" class="w-3 h-3 rounded-full" aria-current="false" aria-label="Slide 5"
+                    data-carousel-slide-to="4"></button>
+            </div>
+            <!-- Slider controls -->
+            <button type="button"
+                class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+                data-carousel-prev>
+                <span
+                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                    <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 1 1 5l4 4" />
+                    </svg>
+                    <span class="sr-only">Previous</span>
+                </span>
+            </button>
+            <button type="button"
+                class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+                data-carousel-next>
+                <span
+                    class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                    <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 9 4-4-4-4" />
+                    </svg>
+                    <span class="sr-only">Next</span>
+                </span>
             </button>
         </div>
 
-        {% endfor %}
 
     </div>
-</div>
 
+
+    <div class="bg-black min-h-screen py-10 px-6 text-white font-sans">
+        <h1 class="text-4xl font-bold text-center mb-10">
+            <span class="text-white">Keep calm</span> <span class="text-yellow-400">and</span> ride your bike
+        </h1>
+
+
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mx-auto">
+            {% for products in product %}
+
+            <!-- Product Card -->
+            <div class="bg-zinc-900 rounded-2xl border border-yellow-400 p-4 flex flex-col justify-between">
+                <!-- Product Image -->
+                {% if products.product_image.first %}
+                <img src="{{ products.product_image.first.image.url }}" alt="{{ products.name }}"
+                    class="w-full h-40 object-contain mb-3" />
+                {% else %}
+                <div class="w-full h-40 bg-gray-700 flex items-center justify-center text-gray-300">No Image</div>
+                {% endif %}
+
+                <!-- Product Info -->
+                <div class="mb-2 product_info">
+                    <p class="text-sm text-gray-400 font-semibold my-1">{{ products.category.name }} </p>
+                    <h3 class="font-semibold text-lg font-bold ">{{ products.name }}</h3>
+                    <p class="text-sm text-gray-300 mt-2 product_description">{{ products.description|slice:":200" }}
+                        ..... <span class="font-semibold text-md">more</span></p>
+                    <div class="mt-4">
+                        <h5 class="mt-1 font-semibold">Available : {{ products.stock }} items </h5>
+                        <!-- <p class="text-sm text-gray-300 mt-1">{{ products.available }} </p> -->
+                        <h5 class="mt-1 font-semibold">Rating : {{ products.rating }} </h5>
+                        <p class="font-bold mt-2 ">Price : {{ products.price }} BDT</p>
+                    </div>
+                </div>
+
+
+                <div class="card_button flex justify-between gap-6">
+
+                    <button
+                        class="bg-yellow-400 text-black font-semibold w-full mt-3 py-2 rounded-lg hover:bg-yellow-600 flex justify-center items-center gap-2">
+                        Add to Cart 🛒
+                    </button>
+    
+                    <button
+                        class="bg-blue-400 text-black font-semibold w-full mt-3 py-2 rounded-lg hover:bg-blur-600 flex justify-center items-center gap-2">
+                        Details 
+                    </button>
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
 
 {% endblock %}
