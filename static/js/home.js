@@ -12,18 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
             item.classList.toggle("block", i === index);
         });
         indicators.forEach((indicator, i) => {
-        indicator.setAttribute("aria-current", i === index ? "true" : "false");
+            indicator.setAttribute("aria-current", i === index ? "true" : "false");
         });
     }
 
     prevBtn.addEventListener("click", () => {
         current = (current - 1 + items.length) % items.length;
-    showSlide(current);
+        showSlide(current);
     });
 
     nextBtn.addEventListener("click", () => {
         current = (current + 1) % items.length;
-    showSlide(current);
+        showSlide(current);
     });
 
     indicators.forEach((button, index) => {
@@ -35,4 +35,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize
     showSlide(current);
+});
+
+
+// Cart functionality
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function saveCart() {
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    function addToCart(product) {
+        const existing = cart.find(item => item.id === product.id);
+    if (existing) {
+        existing.quantity += 1;
+        } else {
+        product.quantity = 1;
+    cart.push(product);
+        }
+    saveCart();
+    alert(`${product.name} added to cart!`);
+    }
+
+    document.querySelectorAll(".add-to-cart").forEach(button => {
+        button.addEventListener("click", () => {
+            const product = {
+                id: button.getAttribute("data-product-id"),
+                name: button.getAttribute("data-product-name"),
+                price: parseFloat(button.getAttribute("data-product-price")),
+            };
+            addToCart(product);
+        });
+    });
 });
