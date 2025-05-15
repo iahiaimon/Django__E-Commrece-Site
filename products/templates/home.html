@@ -81,6 +81,10 @@
     </div>
 
 
+    <!-- Products -->
+
+
+
     <div class="bg-black py-10 px-6 text-white font-sans">
         <h1 class="text-4xl font-bold text-center mb-10">
             <span class="text-white">Keep calm</span> <span class="text-yellow-400">and</span> ride your bike
@@ -93,6 +97,15 @@
 
             <!-- Product Card -->
             <div class="bg-zinc-900 rounded-2xl border border-yellow-400 p-4 flex flex-col justify-between">
+
+                {% if products.is_new %}
+                <span
+                    class="bg-yellow-600 text-white text-xs font-bold px-3 py-1 mb-2 rounded-lg w-[185px] z-10">
+                    🆕 New Arrival**
+                </span>
+                {% endif %}
+
+
                 <!-- Product Image -->
                 {% if products.product_image.first %}
                 <img src="{{ products.product_image.first.image.url }}" alt="{{ products.name }}"
@@ -102,16 +115,34 @@
                 {% endif %}
 
                 <!-- Product Info -->
-                <div class="mb-2 product_info">
+                <div class="mb-2">
                     <p class="text-sm text-gray-400 font-semibold my-1">{{ products.category.name }} </p>
                     <h3 class="font-semibold text-lg font-bold ">{{ products.name }}</h3>
-                    <p class="text-sm text-gray-300 mt-2 product_description">{{ products.description|slice:":200" }}
+                    <p class="text-sm text-gray-300 mt-2">{{ products.description|slice:":200" }}
                         ..... <span class="font-semibold text-md">more</span></p>
                     <div class="mt-4">
                         <h5 class="mt-1 font-semibold">Available : {{ products.stock }} items </h5>
                         <!-- <p class="text-sm text-gray-300 mt-1">{{ products.available }} </p> -->
                         <h5 class="mt-1 font-semibold">Rating : {{ products.rating }} </h5>
-                        <p class="font-bold mt-2 ">Price : {{ products.price }} BDT</p>
+                        <!-- <p class="font-bold mt-2 ">Price : {{ products.price }} BDT</p> -->
+                        {% if products.discount_parcentage %}
+                        <!-- <p class="text-sm text-red-600 font-semibold">
+                            {{ products.discount_parcentage }}% OFF
+                        </p> -->
+                        <p class="font-bold">Price :
+                            <span class="line-through font-bold my-2 ">
+                                {{ products.price }}
+                            </span>
+                            BDT
+                        </p>
+                        <p>
+                            <span class="text-yellow-400 font-bold my-2">
+                                New Price : {{ products.final_price|floatformat:2 }} BDT
+                            </span>
+                        </p>
+                        {% else %}
+                        <p class="text-white font-bold mt-2">₹{{ products.price }}</p>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -146,7 +177,7 @@
             {% for category in categories %}
             <div class="w-full md:w-1/3 lg:w-1/4 p-4">
                 <div
-                    class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    class="bg-gray-700 rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
 
                     <!-- Image -->
                     <a href="{% url 'category_products' category.slug %}">
@@ -156,8 +187,8 @@
 
                     <!-- Text -->
                     <div class="p-4 text-center">
-                        <h4 class="text-lg font-semibold text-gray-800">{{ category.name }}</h4>
-                        <h6 class="text-sm text-gray-500 mb-4">{{ category.product_count }} items</h6>
+                        <h4 class="text-lg font-semibold text-white-800">{{ category.name }}</h4>
+                        <h6 class="text-sm text-white-500 mb-4">{{ category.product_count }} items</h6>
 
                         <!-- Shop Button -->
                         <a href="{% url 'category_products' category.slug %}"

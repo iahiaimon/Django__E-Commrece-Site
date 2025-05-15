@@ -4,6 +4,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.utils import timezone
+from datetime import timedelta
 
 from .models import product
 from .forms import productForm
@@ -17,13 +19,23 @@ from .models import category, product, product_image, review
 def home(request):
     products = product.objects.all()
     categories = category.objects.annotate(product_count=Count('products'))
+# Example: apply discount
+    for p in products:
+        if p.discount_parcentage:
+            p.final_price = p.price - (p.price * p.discount_parcentage / 100)
+        else:
+            p.final_price = p.price
+        
+        p.is_new = (timezone.now() - p.created_at) <= timedelta(days=5)
 
-    contex = {
+
+
+    context = {
         "categories": categories,
         "MEDIA_URL": settings.MEDIA_URL,
         "product": products,
     }
-    return render(request, "home.html", context=contex)
+    return render(request, "home.html", context=context)
 
 
 def category_products(request, category_slug):
