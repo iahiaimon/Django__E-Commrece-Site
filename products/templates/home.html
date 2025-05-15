@@ -99,8 +99,7 @@
             <div class="bg-zinc-900 rounded-2xl border border-yellow-400 p-4 flex flex-col justify-between">
 
                 {% if products.is_new %}
-                <span
-                    class="bg-yellow-600 text-white text-xs font-bold px-3 py-1 mb-2 rounded-lg w-[185px] z-10">
+                <span class="bg-yellow-600 text-white text-xs font-bold px-3 py-1 mb-2 rounded-lg w-[185px] z-10">
                     🆕 New Arrival**
                 </span>
                 {% endif %}
@@ -154,10 +153,11 @@
                         Add to Cart
                     </a>
 
-                    <button
+                    <a href="{% url 'product_details' products.slug %}"
                         class="bg-blue-400 text-black font-semibold w-full mt-3 py-2 rounded-lg hover:bg-blue-500 flex justify-center items-center gap-2">
                         Details
-                    </button>
+                    </a>
+
                 </div>
 
             </div>

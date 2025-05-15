@@ -26,7 +26,7 @@ def home(request):
         else:
             p.final_price = p.price
         
-        p.is_new = (timezone.now() - p.created_at) <= timedelta(days=5)
+        p.is_new = (timezone.now() - p.created_at) <= timedelta(days=1)
 
 
 
@@ -52,6 +52,15 @@ def category_products(request, category_slug):
         "category": category,
     }
     return render(request, "category.html", context)
+
+
+def product_details(request, slug):
+    products = get_object_or_404(product, slug=slug)
+    context = {
+        "products": products,
+    }
+    
+    return render(request , 'product_details.html' , context=context)
 
 
 # def add_to_cart(request , product_id):
