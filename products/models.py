@@ -66,3 +66,12 @@ class review(models.Model):
 
     def __str__(self):
         return f"Review by {self.user.first_name} for {self.product.name}"
+    
+class Cart(models.Model):
+    user = models.ForeignKey(CustomUser , related_name="carts", on_delete=models.CASCADE , null=True , blank=True)
+    session_id = models.CharField(max_length=255)
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name="cart_items", on_delete=models.CASCADE)
+    product = models.ForeignKey(product, related_name="cart_items", on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0)

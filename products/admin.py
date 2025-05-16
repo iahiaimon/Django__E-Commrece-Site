@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from .models import category , product , product_image , review
+from .models import category , product , product_image , review , Cart , CartItem
 # Register your models here.
 
-admin.site.register([category , product_image , review])
+admin.site.register([category , product_image , review , Cart , CartItem])
 
 class ProductImageInline(admin.TabularInline):  # or use StackedInline
     model = product_image
