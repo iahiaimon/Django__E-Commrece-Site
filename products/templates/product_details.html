@@ -2,22 +2,73 @@
 
 {% block content %}
 
+<div class="w-[80%] mx-auto my-5">
+    <div
+        class="flex flex-col md:flex-row items-center justify-between bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 overflow-hidden">
 
-<a href="#"
-    class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-    {% if products.product_image.first %}
-    <img src="{{ products.product_image.first.image.url }}" alt="{{ products.name }}"
-        class="w-full h-40 object-contain mb-3 hover:scale-105" />
-    {% else %}
-    <div class="w-full h-40 bg-gray-700 flex items-center justify-center text-gray-300">No Image</div>
-    {% endif %}
-    <div class="flex flex-col justify-between p-4 leading-normal">
-        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ products.name }}</h5>
-        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-            {{ products.description }}
-        </p>
+        <!-- Image Section -->
+        <div x-data="{ current: 1 }" class="relative w-full max-w-3xl mx-auto mt-6">
+            <!-- Slides -->
+            <div class="overflow-hidden rounded-lg relative h-80">
+                {% for img in products.product_image.all %}
+                <div x-show="current === {{ forloop.counter }}" class="absolute inset-0 transition-all duration-500">
+                    <img src="{{ products.product_image.first.image.url }}" alt="Image {{ forloop.counter }}"
+                        class="object-contain w-full h-full" />
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Navigation buttons -->
+            <div class="flex justify-center gap-2 mt-4">
+                {% for img in products.product_image.all %}
+                <button @click="current = {{ forloop.counter }}"
+                    :class="{ 'bg-blue-600': current === {{ forloop.counter }} }"
+                    class="w-3 h-3 rounded-full bg-gray-400 focus:outline-none"></button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Details Section -->
+        <div class="w-full md:w-1/2 p-4">
+            <h3 class="font-semibold text-white mb-3">Category: {{ products.category.name }}</h3>
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ products.name }}</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                <span class="font-semibold">About {{ products.name }}: </span>
+                {{ products.description }}
+            </p>
+
+            {% if products.discount_parcentage %}
+            <p class="font-bold text-white">Price:
+                <span class="line-through font-bold my-2 ">{{ products.price }}</span> BDT
+            </p>
+            <p>
+                <span class="text-yellow-400 font-bold my-2">
+                    New Price: {{ products.final_price|floatformat:2 }} BDT
+                </span>
+            </p>
+            {% else %}
+            <p class="text-white font-bold mt-2">৳{{ products.price }}</p>
+            {% endif %}
+
+            <p class="text-white">In Stock: {{ products.stock }}</p>
+            <p class="text-white mb-4">Rating: {{ products.rating }}</p>
+
+            <!-- Buttons -->
+            <div class="card_button flex justify-between gap-4">
+                <a href="#"
+                    class="bg-yellow-400 text-black font-semibold w-full py-2 rounded-lg hover:bg-yellow-600 flex justify-center items-center gap-2">
+                    Add to Cart
+                </a>
+
+                <a href="{% url 'product_details' products.slug %}"
+                    class="bg-orange-400 text-black font-semibold w-full py-2 rounded-lg hover:bg-orange-500 flex justify-center items-center gap-2">
+                    Buy Now
+                </a>
+            </div>
+        </div>
     </div>
-</a>
+</div>
+
 
 
 {% endblock %}
