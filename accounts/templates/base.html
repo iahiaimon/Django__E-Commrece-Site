@@ -125,37 +125,37 @@
                         d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                 </svg>
             </button>
+            <div class="text-white">
+                <h1>Your Cart</h1>
+                {% if cart %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for id, item in cart.items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.price|floatformat:2|add:""|add:item.quantity|floatformat:2 }}</td>
+                            <td><a href="{% url 'remove_from_cart' id %}">Remove</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <p><strong>Total: {{ total }}</strong></p>
+                {% else %}
+                <p>Your cart is empty.</p>
+                {% endif %}
 
-            <h1>Your Cart</h1>
-            {% if cart %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Qty</th>
-                        <th>Total</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for id, item in cart.items %}
-                    <tr>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.price }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.price|floatformat:2|add:""|add:item.quantity|floatformat:2 }}</td>
-                        <td><a href="{% url 'remove_from_cart' id %}">Remove</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <p><strong>Total: {{ total }}</strong></p>
-            {% else %}
-            <p>Your cart is empty.</p>
-            {% endif %}
-
-
+            </div>
         </div>
 
     </header>

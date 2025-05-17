@@ -19,6 +19,8 @@ from .models import category, product, product_image, review
 
 def home(request):
     products = product.objects.all()
+    cart = request.session.get("cart", {})
+    total = sum(item["price"] * item["quantity"] for item in cart.values())
     categories = category.objects.annotate(product_count=Count("products"))
     # Example: apply discount
     for p in products:
@@ -33,7 +35,10 @@ def home(request):
         "categories": categories,
         "MEDIA_URL": settings.MEDIA_URL,
         "product": products,
+        "cart": cart,
+        "total": total,
     }
+
     return render(request, "home.html", context=context)
 
 
@@ -118,9 +123,9 @@ def add_to_cart(request, product_id):
             ),
             "quantity": 1,
         }
-
+    print(cart)
     request.session["cart"] = cart
-    return redirect("cart_view")
+    return redirect("home")
 
 
 def cart_view(request):
@@ -134,4 +139,4 @@ def remove_from_cart(request, product_id):
     if str(product_id) in cart:
         del cart[str(product_id)]
         request.session["cart"] = cart
-    return redirect("cart_view")
+    return redirect("home")
