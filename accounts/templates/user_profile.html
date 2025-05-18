@@ -1,10 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
 <div class="max-w-4xl mx-auto my-10 p-6 bg-white rounded-xl shadow-md dark:bg-gray-800">
     <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">User Profile</h2>
 
     <!-- Profile Info -->
     <div class="flex items-center space-x-6 mb-8">
         <img src="{{ user.profile.image.url|default:'/static/images/default-avatar.png' }}" alt="Profile Picture"
-             class="w-24 h-24 rounded-full border-2 border-blue-500 object-cover">
+            class="w-24 h-24 rounded-full border-2 border-blue-500 object-cover">
         <div>
             <h3 class="text-xl font-semibold text-gray-800 dark:text-white">{{ user.username }}</h3>
             <p class="text-gray-600 dark:text-gray-300">{{ user.email }}</p>
@@ -25,13 +29,13 @@
         <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
             <h4 class="text-lg font-semibold mb-3 text-gray-800 dark:text-white">Recent Orders</h4>
             {% if orders %}
-                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
-                    {% for order in orders %}
-                    <li>Order #{{ order.id }} - {{ order.created_at|date:"M d, Y" }} - {{ order.total }} BDT</li>
-                    {% endfor %}
-                </ul>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300">
+                {% for order in orders %}
+                <li>Order #{{ order.id }} - {{ order.created_at|date:"M d, Y" }} - {{ order.total }} BDT</li>
+                {% endfor %}
+            </ul>
             {% else %}
-                <p class="text-sm text-gray-500">You haven't placed any orders yet.</p>
+            <p class="text-sm text-gray-500">You haven't placed any orders yet.</p>
             {% endif %}
         </div>
 
@@ -39,10 +43,16 @@
         <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg md:col-span-2">
             <h4 class="text-lg font-semibold mb-3 text-gray-800 dark:text-white">Shipping Address</h4>
             {% if user.profile.address %}
-                <p class="text-gray-700 dark:text-gray-300">{{ user.profile.address }}</p>
+            <p class="text-gray-700 dark:text-gray-300">{{ user.profile.address }}</p>
             {% else %}
-                <p class="text-sm text-gray-500">No shipping address saved.</p>
+            <p class="text-sm text-gray-500">No shipping address saved.</p>
             {% endif %}
         </div>
     </div>
+
+    <div class="button">
+        <a href="{% url 'logout' %}" class="text-white">Logout</a>
+    </div>
 </div>
+
+{% endblock %}

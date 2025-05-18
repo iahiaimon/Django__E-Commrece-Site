@@ -7,11 +7,11 @@ class CustomUserAdmin(UserAdmin):
     list_display = ['email', 'phone', 'is_staff']
     ordering = ['email']
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'phone', 'address')}),
+        (None, {'fields': ('email', 'password', 'phone', 'address' , 'image')}),
         ('Permissions', {'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions')}),
     )
     add_fieldsets = (
-        (None, {'fields': ('email', 'password1', 'password2', 'phone', 'address')}),
+        (None, {'fields': ('email', 'password1', 'password2', 'phone', 'address' , 'image')}),
     )
     search_fields = ('email',)
 

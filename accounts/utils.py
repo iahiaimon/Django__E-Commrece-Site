@@ -7,17 +7,12 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.template.loader import render_to_string
 
-
-
-
 class EmailVerificationTokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
         return str(user.pk) + str(timestamp) + str(user.is_verified)
 
 account_activation_token = EmailVerificationTokenGenerator()
  
-
-
 # Function to send the email verification link
 
 def send_verification_email(request, user):
@@ -36,16 +31,12 @@ def send_verification_email(request, user):
         'verification_link': verification_link,
     })
 
-
     from_email = settings.EMAIL_HOST_USER 
     
     # print("Sending email to:", user.email)
     # print("From:", settings.DEFAULT_FROM_EMAIL)
-
-
     # Send the email
     # send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
-
 
     email = EmailMessage(
         subject=subject,

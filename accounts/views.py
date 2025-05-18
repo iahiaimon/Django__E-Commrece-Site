@@ -7,15 +7,13 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
 
-
 from .models import CustomUser
 from .forms import CustomUserForm
 from .utils import send_verification_email
 from products.views import home
 
-
-
 # Create your views here.
+
 
 def user_singup(request):
     if request.method == "POST":
@@ -28,10 +26,10 @@ def user_singup(request):
             messages.info(
                 request, "A verification email has been sent to your email address"
             )
-            
+
             return redirect("login")
         else:
-            print(form.errors)  # ← this helps debug
+            print(form.errors)
 
     else:
         form = CustomUserForm()
@@ -51,7 +49,7 @@ def verify_email(request, uidb64, token):
         user.is_active = True
         user.save()
         messages.success(request, "Email verified! You can now log in.")
-        return redirect("home")  # adjust the name to your login view
+        return redirect("login")
     else:
         messages.error(request, "Verification link is invalid or has expired.")
         return render(request, "singup.html")
@@ -69,7 +67,7 @@ def user_login(request):
         else:
             login(request, user)
             messages.success(request, "You have logged in successfully")
-            return redirect ("home")
+            return redirect("home")
 
     return render(request, "login.html")
 
@@ -79,3 +77,7 @@ def user_logout(request):
     logout(request)
     messages.success(request, "You have been logged out successfully")
     return redirect("login")
+
+
+def user_profile(request):
+    return render(request, "user_profile.html")
