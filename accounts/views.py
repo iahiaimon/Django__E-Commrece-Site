@@ -6,9 +6,11 @@ from django.contrib import messages
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth import get_user_model
+from payments.models import Order
+
 
 from .models import CustomUser
-from .forms import CustomUserForm
+from .forms import CustomUserForm , ProfileForm
 from .utils import send_verification_email
 from products.views import home
 
@@ -79,5 +81,30 @@ def user_logout(request):
     return redirect("login")
 
 
+@login_required
 def user_profile(request):
-    return render(request, "user_profile.html")
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")[:5]
+    # reviews = Review.objects.filter(user=request.user).select_related("product")
+    return render(request, "user_profile.html", {"orders": orders})
+
+
+@login_required
+def edit_profile(request):
+    user_form = CustomUserForm(instance=request.user)
+    profile_form = ProfileForm(instance=request.user)
+
+    if request.method == "POST":
+        user_form = CustomUserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(
+            request.POST, request.FILES, instance=request.user.profile
+        )
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect("user_profile")
+
+    return render(
+        request,
+        "edit_profile.html",
+        {"user_form": user_form, "profile_form": profile_form},
+    )

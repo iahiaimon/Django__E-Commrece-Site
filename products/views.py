@@ -10,8 +10,6 @@ from datetime import timedelta
 from .models import product, Cart, CartItem
 from .forms import productForm
 from .utils import get_session_key
-
-
 from .models import category, product, product_image, review
 
 # Create your views here.
@@ -71,20 +69,21 @@ def add_to_cart(request, product_id):
     item = get_object_or_404(product, id=product_id)
     cart = request.session.get("cart", {})
 
+    # Get first image URL safely
+    image_url = ""
+    if hasattr(item, "product_image") and item.product_image.exists():
+        image_url = item.product_image.first().image.url
+
     if str(product_id) in cart:
         cart[str(product_id)]["quantity"] += 1
     else:
         cart[str(product_id)] = {
             "name": item.name,
-            "price": float(item.price),
-            "image": (
-                item.product_image.first().image.url
-                if item.product_image.exists()
-                else ""
-            ),
+            "price": float(item.price),  # ensure float, not Decimal
+            "image": image_url,
             "quantity": 1,
         }
-    print(cart)
+
     request.session["cart"] = cart
     return redirect("home")
 
@@ -92,7 +91,15 @@ def add_to_cart(request, product_id):
 def cart_view(request):
     cart = request.session.get("cart", {})
     total = sum(item["price"] * item["quantity"] for item in cart.values())
-    return render(request, "cart.html", {"cart": cart, "total": total})
+    return render(
+        request,
+        "cart.html",
+        {
+            "cart": cart,
+            "cart_items": cart.items(),
+            "total": total,
+        },
+    )
 
 
 def remove_from_cart(request, product_id):
@@ -100,6 +107,20 @@ def remove_from_cart(request, product_id):
     if str(product_id) in cart:
         del cart[str(product_id)]
         request.session["cart"] = cart
-    return redirect("home")
+    return redirect("cart_view")
 
 
+def update_cart(request, product_id, action):
+    cart = request.session.get("cart", {})
+    product_id = str(product_id)
+
+    if product_id in cart:
+        if action == "increase":
+            cart[product_id]["quantity"] += 1
+        elif action == "decrease":
+            cart[product_id]["quantity"] -= 1
+            if cart[product_id]["quantity"] <= 0:
+                del cart[product_id]
+
+    request.session["cart"] = cart
+    return redirect("cart_view")  # or your cart page name

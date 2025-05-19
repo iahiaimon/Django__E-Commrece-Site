@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'products',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,10 @@ AUTHENTICATION_BACKENDS =[
     'accounts.authentication.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+DELIVERY_CHARGR = 110
+
+
+SSLCOMMERZ_IS_SANDBOX = config("SSLCOMMERZ_IS_SANDBOX")
+SSLCOMMERZ_STORE_ID = config("SSLCOMMERZ_STORE_ID")
+SSLCOMERZ_STORE_PASS = config("SSLCOMMERZ_STORE_PASS")

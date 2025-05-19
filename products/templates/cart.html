@@ -1,35 +1,61 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="bg-gray-400">
+    <div class="max-w-4xl mx-auto px-4 py-6 min-h-[90vh] ">
+        <h1 class="text-3xl font-bold mb-6 text-center">Your Cart</h1>
 
-<h1>Your Cart</h1>
-{% if cart %}
-<table>
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Total</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for id, item in cart.items %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.price }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>{{ item.price|floatformat:2|add:""|add:item.quantity|floatformat:2 }}</td>
-            <td><a href="{% url 'remove_from_cart' id %}">Remove</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<p><strong>Total: {{ total }}</strong></p>
-{% else %}
-<p>Your cart is empty.</p>
-{% endif %}
+        {% if cart_items %}
+        <div class="space-y-4">
+            {% for id ,item in cart.items %}
+            <div class="flex items-center bg-gray-600 shadow-md rounded-lg p-4 text-white">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.name }}" class="w-24 h-24 object-cover rounded mr-4">
+                {% else %}
+                <div class="w-24 h-24 bg-gray-200 flex items-center justify-center text-gray-500 rounded mr-4">
+                    No Image
+                </div>
+                {% endif %}
+
+                <div class="flex-1">
+                    <h2 class="text-lg font-semibold">{{ item.name }}</h2>
+                    <p class="">Price: {{ item.price }} BDT</p>
+                    <p class=" flex items-center gap-3">
+                        Quantity:
+                        <a href="{% url 'update_cart' id 'decrease' %}">
+                            <i class="fa-solid fa-minus bg-black px-2 py-1 rounded hover:bg-gray-300"></i>
+                        </a>
+
+                        <span class="px-2 font-semibold">{{ item.quantity }}</span>
+
+                        <a href="{% url 'update_cart' id 'increase' %}">
+                            <i class="fa-solid fa-plus bg-black px-2 py-1 rounded hover:bg-gray-300"></i>
+                        </a>
+                    </p>
 
 
+                    <p class=" font-medium">Total: {{ item.total|floatformat:2 }} BDT</p>
+                </div>
+
+                <div class="ml-4">
+                    <a href="{% url 'remove_from_cart' id %}" class="text-red-500 hover:text-red-700 text-2xl px-5">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-right mt-6">
+            <p class="text-xl font-bold">Grand Total: {{ total|floatformat:2 }} BDT</p>
+            <a href="#" class="inline-block mt-4 bg-teal-600 text-white px-5 py-2 rounded hover:bg-teal-700">
+                Proceed to Checkout
+            </a>
+        </div>
+
+        {% else %}
+        <p class="text-gray-600">Your cart is empty.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

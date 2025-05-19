@@ -8,5 +8,7 @@ urlpatterns = [
     path("verify-email/<uidb64>/<token>/", views.verify_email, name="verify_email"),
     path("login/", views.user_login, name="login"),
     path("logout/", views.user_logout, name="logout"),
-    path("profile/" , views.user_profile , name = "user_profile"),
+    path("profile/", views.user_profile, name="user_profile"),
+    path("edit-profile/", views.edit_profile, name="edit_profile"),
+    # path("order/<int:order_id>/", views.order_detail, name="order_detail"),
 ]
