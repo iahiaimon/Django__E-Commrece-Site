@@ -63,6 +63,8 @@ class review(models.Model):
     reviews = models.TextField()
 
     is_approved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True , null = True , blank = True)
+    updated_at = models.DateTimeField(auto_now=True , null = True , blank = True)
 
     def __str__(self):
         return f"Review by {self.user.first_name} for {self.product.name}"
@@ -70,8 +72,12 @@ class review(models.Model):
 class Cart(models.Model):
     user = models.ForeignKey(CustomUser , related_name="carts", on_delete=models.CASCADE , null=True , blank=True)
     session_id = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True , null = True , blank = True)
+    updated_at = models.DateTimeField(auto_now=True , null = True , blank = True)
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name="cart_items", on_delete=models.CASCADE)
     product = models.ForeignKey(product, related_name="cart_items", on_delete=models.CASCADE)
     quantity = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True , null = True , blank = True)
+    updated_at = models.DateTimeField(auto_now=True , null = True , blank = True)
