@@ -65,27 +65,54 @@ def product_details(request, slug):
     return render(request, "product_details.html", context=context)
 
 
+# def add_to_cart(request, product_id):
+#     item = get_object_or_404(product, id=product_id)
+#     cart = request.session.get("cart", {})
+
+#     # Get first image URL safely
+#     image_url = ""
+#     if hasattr(item, "product_image") and item.product_image.exists():
+#         image_url = item.product_image.first().image.url
+
+#     if str(product_id) in cart:
+#         cart[str(product_id)]["quantity"] += 1
+#     else:
+#         cart[str(product_id)] = {
+#             "name": item.name,
+#             "price": float(item.price),  # ensure float, not Decimal
+#             "image": image_url,
+#             "quantity": 1,
+#         }
+
+#     request.session["cart"] = cart
+#     return redirect("home")
+
+
+@login_required  # Ensure user is logged in before proceeding
 def add_to_cart(request, product_id):
+    # Fetch the product from the database
     item = get_object_or_404(product, id=product_id)
-    cart = request.session.get("cart", {})
 
-    # Get first image URL safely
-    image_url = ""
-    if hasattr(item, "product_image") and item.product_image.exists():
-        image_url = item.product_image.first().image.url
+    # Try to get the cart for the logged-in user
+    cart, created = Cart.objects.get_or_create(user=request.user)
 
-    if str(product_id) in cart:
-        cart[str(product_id)]["quantity"] += 1
+    # Try to get the CartItem, or create a new one if it doesn't exist
+    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=item)
+
+    if created:
+        cart_item.quantity = (
+            1  # If the item is newly added to the cart, set the quantity to 1
+        )
     else:
-        cart[str(product_id)] = {
-            "name": item.name,
-            "price": float(item.price),  # ensure float, not Decimal
-            "image": image_url,
-            "quantity": 1,
-        }
+        cart_item.quantity += (
+            1  # If the item already exists in the cart, increase the quantity by 1
+        )
 
-    request.session["cart"] = cart
-    return redirect("home")
+    cart_item.save()  # Save the cart item with the updated quantity
+
+    return redirect(
+        "home"
+    )  # Redirect to the home page after adding the item to the cart
 
 
 def cart_view(request):
