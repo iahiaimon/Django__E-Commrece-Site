@@ -65,89 +65,94 @@ def product_details(request, slug):
     return render(request, "product_details.html", context=context)
 
 
-# def add_to_cart(request, product_id):
-#     item = get_object_or_404(product, id=product_id)
-#     cart = request.session.get("cart", {})
-
-#     # Get first image URL safely
-#     image_url = ""
-#     if hasattr(item, "product_image") and item.product_image.exists():
-#         image_url = item.product_image.first().image.url
-
-#     if str(product_id) in cart:
-#         cart[str(product_id)]["quantity"] += 1
-#     else:
-#         cart[str(product_id)] = {
-#             "name": item.name,
-#             "price": float(item.price),  # ensure float, not Decimal
-#             "image": image_url,
-#             "quantity": 1,
-#         }
-
-#     request.session["cart"] = cart
-#     return redirect("home")
-
-
-@login_required  # Ensure user is logged in before proceeding
+@login_required  
 def add_to_cart(request, product_id):
-    # Fetch the product from the database
     item = get_object_or_404(product, id=product_id)
-
-    # Try to get the cart for the logged-in user
     cart, created = Cart.objects.get_or_create(user=request.user)
-
-    # Try to get the CartItem, or create a new one if it doesn't exist
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=item)
 
     if created:
-        cart_item.quantity = (
-            1  # If the item is newly added to the cart, set the quantity to 1
-        )
+        cart_item.quantity = (1)
     else:
-        cart_item.quantity += (
-            1  # If the item already exists in the cart, increase the quantity by 1
-        )
+        cart_item.quantity += (1)
 
-    cart_item.save()  # Save the cart item with the updated quantity
+    cart_item.save()  
 
     return redirect(
         "home"
-    )  # Redirect to the home page after adding the item to the cart
-
+    )  
 
 def cart_view(request):
-    cart = request.session.get("cart", {})
-    total = sum(item["price"] * item["quantity"] for item in cart.values())
-    return render(
-        request,
-        "cart.html",
-        {
-            "cart": cart,
-            "cart_items": cart.items(),
-            "total": total,
-        },
-    )
+    if request.user.is_authenticated:
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+    else:
+        session_key = get_session_key(request)
+        cart, _ = Cart.objects.get_or_create(session_id=session_key)
+
+    cart_items_qs = CartItem.objects.filter(cart=cart).select_related("product")
+    cart_items = []
+    total = 0
+
+    for item in cart_items_qs:
+        item_total = item.quantity * item.product.price
+        cart_items.append(
+            {
+                "id": item.product.id,
+                "name": item.product.name,
+                "price": item.product.price,
+                "quantity": item.quantity,
+                "image": (
+                    item.product.product_image.first().image.url
+                    if item.product.product_image.exists()
+                    else ""
+                ),
+                "total": item_total,
+            }
+        )
+        total += item_total
+
+    context = {
+        "cart_items": cart_items,
+        "total": total,
+    }
+
+    return render(request, "cart.html", context)
 
 
 def remove_from_cart(request, product_id):
-    cart = request.session.get("cart", {})
-    if str(product_id) in cart:
-        del cart[str(product_id)]
-        request.session["cart"] = cart
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user).first()
+        print("problem found")
+    else:
+        session_key = get_session_key(request)
+        cart = Cart.objects.filter(session_id=session_key).first()
+
+    if cart:
+        CartItem.objects.filter(cart=cart, product_id=product_id).delete()
+
     return redirect("cart_view")
 
 
 def update_cart(request, product_id, action):
-    cart = request.session.get("cart", {})
-    product_id = str(product_id)
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user).first()
+    else:
+        cart = Cart.objects.filter(session_id=get_session_key(request)).first()
 
-    if product_id in cart:
+    if not cart:
+        return redirect("cart_view")
+
+    cart_item = CartItem.objects.filter(cart=cart, product_id=product_id).first()
+
+    if cart_item:
         if action == "increase":
-            cart[product_id]["quantity"] += 1
+            cart_item.quantity += 1
+            cart_item.save()
         elif action == "decrease":
-            cart[product_id]["quantity"] -= 1
-            if cart[product_id]["quantity"] <= 0:
-                del cart[product_id]
+            cart_item.quantity -= 1
+            if cart_item.quantity <= 0:
+                cart_item.delete()
+            else:
+                cart_item.save()
 
-    request.session["cart"] = cart
-    return redirect("cart_view")  # or your cart page name
+    return redirect("cart_view")

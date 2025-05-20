@@ -1,41 +1,205 @@
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from products.models import Cart, CartItem  # Update the import as needed
-from products.utils import get_session_key  # Make sure you have this function
+from django.http import HttpResponse, JsonResponse
+from products.models import Cart, CartItem, product
+from products.utils import get_session_key
+from .models import Order, OrderProduct, Payment
+from django.views.decorators.csrf import csrf_exempt
+from sslcommerz_python_api import SSLCSession
+from django.urls import reverse
+# from sslcommerz_lib import SSLCSession
+from products.models import product
+
+import datetime
+import random
 
 
 def place_order(request):
-    # ✅ 1. Get Cart (by user or session)
+    # Get cart
     try:
         if request.user.is_authenticated:
             cart = Cart.objects.get(user=request.user)
         else:
             cart = Cart.objects.get(session_id=get_session_key(request))
-    except Cart.DoesNotExist as e:
-        print(e)
-        return redirect("home")  # No cart exists
-
-    # ✅ 2. Get cart items
-    cart_products = CartItem.objects.filter(cart=cart).select_related("product")
-
-    # ✅ 3. Check if cart is empty
-    if not cart_products.exists():
-        print("Cart item is not found")
+    except Cart.DoesNotExist:
         return redirect("home")
 
-    # ✅ 4. Calculate total and quantity
+    # Get cart products
+    cart_products = CartItem.objects.filter(cart=cart).select_related("product")
+
+    if not cart_products.exists():
+        return redirect("home")
+
     quantity = 0
     total = 0
-    for item in cart_products:
-        quantity += item.quantity
-        total += item.product.price * item.quantity
+    cart_items = []
 
-    # ✅ 5. Context
+    for item in cart_products:
+        item_total = item.quantity * item.product.price
+        cart_items.append(
+            {
+                "product": item.product,
+                "quantity": item.quantity,
+                "item_total": item_total,
+            }
+        )
+        quantity += item.quantity
+        total += item_total
+
+    delivery = getattr(settings, "DELIVERY_CHARGE", 0)
+    grand_total = total + delivery
+
+    # Handle form POST (placing order)
+    if request.method == "POST":
+        payment_option = request.POST.get("payment_method", "cash")
+
+        try:
+            current_user = request.user
+            current_date = datetime.date.today()
+            order_number = current_date.strftime("%Y%m%d%H%M%S") + str(
+                random.randint(1000, 9999)
+            )
+
+            order = Order.objects.create(
+                user=current_user,
+                phone=current_user.phone,
+                address=current_user.address,
+                order_note=request.POST.get("order_note", ""),
+                order_total=grand_total,
+                status="Pending",
+                order_number=order_number,
+            )
+
+            for item in cart_products:
+                OrderProduct.objects.create(
+                    order=order,
+                    product=item.product,
+                    quantity=item.quantity,
+                    product_price=item.product.price,
+                )
+
+                # Update stock
+                product = item.product
+                if product.stock >= item.quantity:
+                    product.stock -= item.quantity
+                    product.save()
+
+            # Clear the cart
+            cart_products.delete()
+
+            # Redirect based on payment method
+            if payment_option == "cash":
+                return redirect("order_complete")
+            elif payment_option == "sslcommerz":
+                return redirect("payment")
+
+        except Exception as e:
+            return HttpResponse("An error occurred: " + str(e))
+
+    # Show checkout page
     context = {
-        "total": total,
+        "cart_items": cart_items,
         "quantity": quantity,
-        "cart_items": cart_products,
-        "grand_total": total + getattr(settings, "DELIVERY_CHARGE", 0),
+        "total": total,
+        "grand_total": grand_total,
+        "delivery_charge": delivery,
     }
 
     return render(request, "checkout.html", context)
+
+
+def payment(request):
+    user = request.user
+    order = Order.objects.filter(user=user, status="Pending").last()
+
+    if not order:
+        return redirect("home")
+
+    mypayment = SSLCSession(
+        sslc_is_sandbox=settings.SSLCOMMERZ_IS_SANDBOX,
+        sslc_store_id=settings.SSLCOMMERZ_STORE_ID,
+        sslc_store_pass=settings.SSLCOMMERZ_STORE_PASS,
+    )
+
+    status_url = request.build_absolute_uri(reverse("payment_status"))
+
+    mypayment.set_urls(
+        success_url=status_url,
+        fail_url=status_url,
+        cancel_url=status_url,
+        ipn_url=status_url,
+    )
+
+    num_of_items = OrderProduct.objects.filter(order=order).count()
+
+    mypayment.set_product_integration(
+        total_amount=order.order_total,
+        currency="BDT",
+        product_category="clothing",
+        product_name="Order#" + order.order_number,
+        num_of_item=num_of_items,
+        shipping_method="YES",
+        product_profile="general",
+    )
+
+    mypayment.set_customer_info(
+        name=user.username,
+        email=user.email,
+        address1=order.address_line_1,
+        address2=order.address_line_2,
+        city=order.city,
+        postcode=order.postcode,
+        country=order.country,
+        phone=order.mobile,
+    )
+
+    mypayment.set_shipping_info(
+        shipping_to=user.first_name,
+        address=order.address_line_2,
+        city=order.city,
+        postcode=order.postcode,
+        country=order.country,
+    )
+
+    response_data = mypayment.init_payment()
+
+    if response_data["status"] == "FAILED":
+        order.status = "Failed"
+        order.save()
+
+    return redirect(response_data["GatewayPageURL"])
+
+
+@csrf_exempt
+def payment_status(request):
+    if request.method == "POST":
+        payment_data = request.POST
+        if payment_data["status"] == "VALID":
+            val_id = payment_data["val_id"]
+            tran_id = payment_data["tran_id"]
+
+            order = Order.objects.filter(user=request.user).last()
+
+            payment = Payment.objects.create(
+                user=request.user,
+                payment_id=val_id,
+                payment_method="SSLCommerz",
+                amount_paid=order.order_total,
+                status="Completed",
+            )
+
+            order.status = "Completed"
+            order.payment = payment
+            order.save()
+
+            # CartItems will be automatically deleted
+            Cart.objects.filter(user=request.user).delete()
+
+            context = {
+                "order": order,
+                "transaction_id": tran_id,
+            }
+            return render(request, "orders/order-success.html", context)
+
+        else:
+            return render(request, "orders/payment-failed.html")

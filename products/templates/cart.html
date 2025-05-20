@@ -7,7 +7,7 @@
 
         {% if cart_items %}
         <div class="space-y-4">
-            {% for id ,item in cart.items %}
+            {% for item in cart_items %}
             <div class="flex items-center bg-gray-600 shadow-md rounded-lg p-4 text-white">
                 {% if item.image %}
                 <img src="{{ item.image }}" alt="{{ item.name }}" class="w-24 h-24 object-cover rounded mr-4">
@@ -22,13 +22,13 @@
                     <p class="">Price: {{ item.price }} BDT</p>
                     <p class=" flex items-center gap-3">
                         Quantity:
-                        <a href="{% url 'update_cart' id 'decrease' %}">
+                        <a href="{% url 'update_cart' item.id 'decrease' %}">
                             <i class="fa-solid fa-minus bg-black px-2 py-1 rounded hover:bg-gray-300"></i>
                         </a>
 
                         <span class="px-2 font-semibold">{{ item.quantity }}</span>
 
-                        <a href="{% url 'update_cart' id 'increase' %}">
+                        <a href="{% url 'update_cart' item.id 'increase' %}">
                             <i class="fa-solid fa-plus bg-black px-2 py-1 rounded hover:bg-gray-300"></i>
                         </a>
                     </p>
@@ -38,7 +38,7 @@
                 </div>
 
                 <div class="ml-4">
-                    <a href="{% url 'remove_from_cart' id %}" class="text-red-500 hover:text-red-700 text-2xl px-5">
+                    <a href="{% url 'remove_from_cart' item.id %}" class="text-red-500 hover:text-red-700 text-2xl px-5">
                         <i class="fa-solid fa-trash"></i>
                     </a>
                 </div>

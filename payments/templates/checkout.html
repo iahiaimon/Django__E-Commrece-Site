@@ -15,7 +15,7 @@
                     <p class="text-gray-800 font-medium">{{ item.product.name }}</p>
                     <p class="text-sm text-gray-600">Quantity: {{ item.quantity }}</p>
                 </div>
-                <p class="text-gray-800 font-semibold">{{ item.total_price }} BDT</p>
+                <p class="text-gray-800 font-semibold">{{ item.item_total|floatformat:2 }} BDT</p>
             </div>
             {% empty %}
             <p class="text-gray-500">Your cart is empty.</p>
@@ -23,7 +23,7 @@
         </div>
         <div class="flex justify-between mt-6 border-t pt-4">
             <p class="text-lg font-bold text-gray-800">Total:</p>
-            <p class="text-lg font-bold text-green-600">{{ cart_total }} BDT</p>
+            <p class="text-lg font-bold text-green-600">{{ grand_total|floatformat:2 }} BDT</p>
         </div>
     </div>
 
@@ -50,12 +50,27 @@
             </div>
         </div>
 
-        <!-- Payment placeholder (can be extended later) -->
         <div class="pt-4">
             <p class="text-gray-600 text-sm">Note: Payment will be collected upon delivery.</p>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Select Payment Method</h3>
+
+                <div class="space-y-4">
+                    <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:shadow-md transition">
+                        <input type="radio" name="payment_method" value="cod" class="form-radio h-5 w-5 text-blue-600"
+                            required>
+                        <span class="ml-3 text-gray-700">Cash on Delivery</span>
+                    </label>
+
+                    <label class="flex items-center p-4 border rounded-lg cursor-pointer hover:shadow-md transition">
+                        <input type="radio" name="payment_method" value="sslcommerz"
+                            class="form-radio h-5 w-5 text-blue-600" required>
+                        <span class="ml-3 text-gray-700">Pay using SSL Commerz</span>
+                    </label>
+                </div>
+            </div>
         </div>
 
-        <!-- Submit -->
         <button type="submit"
             class="w-full bg-teal-600 text-white py-3 rounded-md font-semibold hover:bg-teal-700 transition">
             Place Order
