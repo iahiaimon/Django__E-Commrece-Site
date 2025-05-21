@@ -7,6 +7,7 @@ from .models import Order, OrderProduct, Payment
 from django.views.decorators.csrf import csrf_exempt
 from sslcommerz_python_api import SSLCSession
 from django.urls import reverse
+
 # from sslcommerz_lib import SSLCSession
 from products.models import product
 
@@ -62,7 +63,6 @@ def place_order(request):
 
             order = Order.objects.create(
                 user=current_user,
-                phone=current_user.phone,
                 address=current_user.address,
                 order_note=request.POST.get("order_note", ""),
                 order_total=grand_total,
@@ -108,6 +108,73 @@ def place_order(request):
     return render(request, "checkout.html", context)
 
 
+# def payment(request):
+#     user = request.user
+#     order = Order.objects.filter(user=user, status="Pending").last()
+
+#     if not order:
+#         return redirect("home")
+
+#     mypayment = SSLCSession(
+#         sslc_is_sandbox=settings.SSLCOMMERZ_IS_SANDBOX,
+#         sslc_store_id=settings.SSLCOMMERZ_STORE_ID,
+#         sslc_store_pass=settings.SSLCOMMERZ_STORE_PASS,
+#     )
+
+#     status_url = request.build_absolute_uri(reverse("payment_status"))
+
+#     mypayment.set_urls(
+#         success_url=status_url,
+#         fail_url=status_url,
+#         cancel_url=status_url,
+#         ipn_url=status_url,
+#     )
+
+#     num_of_items = OrderProduct.objects.filter(order=order).count()
+
+#     mypayment.set_product_integration(
+#         total_amount=order.order_total,
+#         currency="BDT",
+#         product_category="clothing",
+#         product_name="Order#" + order.order_number,
+#         num_of_item=num_of_items,
+#         shipping_method="YES",
+#         product_profile="general",
+#     )
+#     mypayment.set_customer_info(
+#         name=user.get_full_name(),  # Uses first_name + last_name
+#         email=user.email,
+#         address1=user.address or "N/A",  # fallback if address is blank
+#         address2="",
+#         city=order.city,
+#         postcode=order.postcode,
+#         country=order.country,
+#         phone=user.phone
+#     )
+
+
+#     mypayment.set_shipping_info(
+#         shipping_to=user.get_full_name(),
+#         address=order.address,
+#         city=order.city,
+#         postcode=order.postcode,
+#         country=order.country
+#     )
+
+
+#     response_data = mypayment.init_payment()
+
+#     if response_data["status"] == "FAILED":
+#         order.status = "Failed"
+#         order.save()
+
+#     return redirect(response_data["GatewayPageURL"])
+
+
+from sslcommerz_python_api import SSLCSession
+from django.urls import reverse
+
+
 def payment(request):
     user = request.user
     order = Order.objects.filter(user=user, status="Pending").last()
@@ -121,6 +188,7 @@ def payment(request):
         sslc_store_pass=settings.SSLCOMMERZ_STORE_PASS,
     )
 
+    # ✅ Use a named URL pattern for status (make sure it's defined in urls.py)
     status_url = request.build_absolute_uri(reverse("payment_status"))
 
     mypayment.set_urls(
@@ -142,23 +210,25 @@ def payment(request):
         product_profile="general",
     )
 
+    # ✅ Corrected user fields
     mypayment.set_customer_info(
-        name=user.username,
+        name=user.get_full_name(),
         email=user.email,
-        address1=order.address_line_1,
-        address2=order.address_line_2,
-        city=order.city,
-        postcode=order.postcode,
-        country=order.country,
-        phone=order.mobile,
+        address1=user.address or "N/A",
+        address2="",
+        city="Dhaka",
+        postcode="1000",
+        country="Bnagladesh",
+        phone=user.phone,
     )
 
+    # ✅ Shipping info (use order address or user address)
     mypayment.set_shipping_info(
-        shipping_to=user.first_name,
-        address=order.address_line_2,
-        city=order.city,
-        postcode=order.postcode,
-        country=order.country,
+        shipping_to=user.get_full_name(),
+        address=user.address or "N/A",
+        city="Dhaka",
+        postcode="1000",
+        country="Bnagladesh",
     )
 
     response_data = mypayment.init_payment()
@@ -167,7 +237,32 @@ def payment(request):
         order.status = "Failed"
         order.save()
 
-    return redirect(response_data["GatewayPageURL"])
+    # return redirect(response_data["GatewayPageURL"])
+
+    response_data = mypayment.init_payment()
+
+    # Debug: Print or log the response
+    print("SSLCOMMERZ Response:", response_data)
+
+    if response_data.get("status") == "FAILED":
+        order.status = "Failed"
+        order.save()
+        return HttpResponse(
+            "Payment initiation failed: "
+            + response_data.get("failedreason", "Unknown reason")
+        )
+
+    # Check if GatewayPageURL exists before redirecting
+    if "GatewayPageURL" not in response_data:
+        return HttpResponse(
+            "SSLCOMMERZ failed to return a payment URL. Full response: "
+            + str(response_data)
+        )
+
+    # Otherwise redirect to the payment gateway
+    return redirect(
+        response_data[" https://sandbox.sslcommerz.com/gwprocess/v3/api.php"]
+    )
 
 
 @csrf_exempt
@@ -199,7 +294,11 @@ def payment_status(request):
                 "order": order,
                 "transaction_id": tran_id,
             }
-            return render(request, "orders/order-success.html", context)
+            return render(request, "order_success.html", context)
 
         else:
-            return render(request, "orders/payment-failed.html")
+            return render(request, "payment_failed.html")
+
+
+def order_complete(request):
+    return render(request, "order_success.html")

@@ -23,7 +23,7 @@ class Order(models.Model):
     order_total = models.DecimalField(max_digits=10 , decimal_places=2)
     address = models.CharField(max_length=255 , null=True , blank=True)
 
-    is_orderd = models.BooleanField()
+    is_orderd = models.BooleanField(default=False , null=False , blank=False)
     status = models.CharField(max_length=255 , null=True , blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
