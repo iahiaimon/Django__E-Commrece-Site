@@ -47,7 +47,7 @@
                 </span>
             </p>
             {% else %}
-            <p class="text-white font-bold mt-2">৳{{ products.price }}</p>
+            <p class="text-white font-bold mt-2">Price: {{ products.price }}</p>
             {% endif %}
 
             <p class="text-white">In Stock: {{ products.stock }}</p>
@@ -67,6 +67,38 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Existing product details above -->
+
+    <hr class="my-6" />
+
+    <h3 class="text-xl font-bold mb-2">Customer Reviews</h3>
+    {% if reviews %}
+    {% for review in reviews %}
+    <div class="mb-4 p-4 bg-gray-100 rounded">
+        <p class="font-semibold">{{ review.user.get_full_name }} - Rated: {{ review.rating }}/5</p>
+        <p>{{ review.comment }}</p>
+        <p class="text-sm text-gray-500">{{ review.created_at|date:"M d, Y H:i" }}</p>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No reviews yet.</p>
+    {% endif %}
+
+    <hr class="my-6" />
+
+    {% if user.is_authenticated %}
+    <h3 class="text-xl font-bold mb-2">Write a Review</h3>
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Submit Review</button>
+    </form>
+    {% else %}
+    <p class="text-red-600">You must <a href="{% url 'login' %}" class="underline">log in</a> to leave a review.</p>
+    {% endif %}
+
 </div>
 
 

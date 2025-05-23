@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="max-w-5xl mx-auto my-10 p-6 bg-white rounded-xl shadow-md dark:bg-gray-800">
-    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">User Dashboard</h2>
+    <h2 class="text-3xl font-bold text-center text-gray-800 dark:text-white mb-6">User Dashboard</h2>
 
     <!-- Profile Info -->
     <div class="flex items-center space-x-6 mb-8">
@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="flex flex-col gap-5">
 
         <!-- Personal Info -->
         <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
@@ -33,13 +33,30 @@
             <h4 class="text-lg font-semibold mb-3 text-gray-800 dark:text-white">Recent Orders</h4>
             {% if orders %}
             <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1 text-sm">
-                {% for order in orders %}
 
+                {% for order in orders %}
+                <div class="border p-4 mb-4 rounded shadow-sm">
+                    <h3 class="font-semibold">Order #{{ order.order_number }}</h3>
+                    <p>Status: {{ order.status }}</p>
+                    <p>Total: {{ order.order_total }}</p>
+                    <p>Date: {{ order.created_at|date:"d M Y H:i" }}</p>
+
+                    <ul class="mt-2">
+                        {% for item in order.order_products.all %}
+                        <li>
+                            {{ item.product.name }} — Qty: {{ item.quantity }} — {{ item.product_price }} BDT
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% empty %}
+                <p>You have not placed any orders yet.</p>
                 {% endfor %}
             </ul>
             {% else %}
             <p class="text-sm text-gray-500">You haven't placed any orders yet.</p>
             {% endif %}
+
         </div>
 
         <!-- Product Reviews -->

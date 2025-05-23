@@ -85,7 +85,12 @@ def user_logout(request):
 
 @login_required
 def user_profile(request):
-    orders = Order.objects.filter(user=request.user).order_by("-created_at")[:5]
+    # orders = Order.objects.filter(user=request.user).order_by("-created_at")[:5]
+    orders = (
+        Order.objects.filter(user=request.user)
+        .prefetch_related("order_products__product")  # Load related products efficiently
+        .order_by("-created_at")[:5]
+    )
     # reviews = Review.objects.filter(user=request.user).select_related("product")
     return render(request, "user_profile.html", {"orders": orders})
 

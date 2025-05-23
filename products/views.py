@@ -8,7 +8,7 @@ from django.utils import timezone
 from datetime import timedelta
 
 from .models import product, Cart, CartItem
-from .forms import productForm
+from .forms import productForm, ReviewForm
 from .utils import get_session_key
 from .models import category, product, product_image, review
 
@@ -56,31 +56,55 @@ def category_products(request, category_slug):
     return render(request, "category.html", context)
 
 
+# def product_details(request, slug):
+#     products = get_object_or_404(product, slug=slug)
+#     context = {
+#         "products": products,
+#     }
+
+#     return render(request, "product_details.html", context=context)
+
+
 def product_details(request, slug):
-    products = get_object_or_404(product, slug=slug)
+    product_obj = get_object_or_404(product, slug = slug)
+    # reviews = review.objects.filter(product=product_obj).order_by("-created_at")
+    reviews = review
+
+    form = ReviewForm()
+
+    if request.method == "POST" and request.user.is_authenticated:
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.product = product_obj
+            review.save()
+            return redirect("product_details", slug=slug)
+
     context = {
-        "products": products,
+        "product": product_obj,
+        "reviews": reviews,
+        "form": form,
     }
 
-    return render(request, "product_details.html", context=context)
+    return render(request, "product_details.html", context)
 
 
-@login_required  
+@login_required
 def add_to_cart(request, product_id):
     item = get_object_or_404(product, id=product_id)
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=item)
 
     if created:
-        cart_item.quantity = (1)
+        cart_item.quantity = 1
     else:
-        cart_item.quantity += (1)
+        cart_item.quantity += 1
 
-    cart_item.save()  
+    cart_item.save()
 
-    return redirect(
-        "home"
-    )  
+    return redirect("home")
+
 
 def cart_view(request):
     if request.user.is_authenticated:
@@ -156,3 +180,20 @@ def update_cart(request, product_id, action):
                 cart_item.save()
 
     return redirect("cart_view")
+
+
+# def user_review(request , product_id):
+#     product_obj = get_object_or_404(product, id=product_id)
+
+#     if request.method == 'POST':
+#         form = ReviewForm(request.POST)
+#         if form.is_valid():
+#             review = form.save(commit=False)
+#             review.user = request.user
+#             review.product = product_obj
+#             review.save()
+#             return redirect('user_profile')  # Or product detail page
+#     else:
+#         form = ReviewForm()
+
+#     return render(request, 'reviews/write_review.html', {'form': form, 'product': product_obj})
