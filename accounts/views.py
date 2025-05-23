@@ -10,7 +10,7 @@ from payments.models import Order
 
 
 from .models import CustomUser
-from .forms import CustomUserForm , ProfileForm
+from .forms import CustomUserForm, ProfileForm
 from .utils import send_verification_email
 from products.views import home
 
@@ -89,24 +89,22 @@ def user_profile(request):
     # reviews = Review.objects.filter(user=request.user).select_related("product")
     return render(request, "user_profile.html", {"orders": orders})
 
-
 @login_required
 def edit_profile(request):
-    user_form = CustomUserForm(instance=request.user)
-    profile_form = ProfileForm(instance=request.user)
+    user = request.user
 
     if request.method == "POST":
-        user_form = CustomUserForm(request.POST, instance=request.user)
-        profile_form = ProfileForm(
-            request.POST, request.FILES, instance=request.user.profile
-        )
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            return redirect("user_profile")
+        form = CustomUserForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            for field in form.cleaned_data:
+                new_value = form.cleaned_data.get(field)
+                if new_value not in [None, ""]:
+                    setattr(user, field, new_value)
 
-    return render(
-        request,
-        "edit_profile.html",
-        {"user_form": user_form, "profile_form": profile_form},
-    )
+            user.set_password(form.cleaned_data["password"])
+            user.save()
+            return redirect("user_profile")
+    else:
+        form = CustomUserForm(instance=user)
+
+    return render(request, "edit_profile.html", {"form": form})
