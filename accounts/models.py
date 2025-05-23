@@ -46,6 +46,3 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
-from accounts.models import CustomUser 
-user = CustomUser.objects.get(email="fifapes1422@gmail.com")
-print(user.is_verified)
