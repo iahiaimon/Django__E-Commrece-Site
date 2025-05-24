@@ -13,6 +13,7 @@ from .models import CustomUser
 from .forms import CustomUserForm, ProfileForm
 from .utils import send_verification_email
 from products.views import home
+from products.models import review
 
 # Create your views here.
 
@@ -88,11 +89,25 @@ def user_profile(request):
     # orders = Order.objects.filter(user=request.user).order_by("-created_at")[:5]
     orders = (
         Order.objects.filter(user=request.user)
-        .prefetch_related("order_products__product")  # Load related products efficiently
+        .prefetch_related(
+            "order_products__product"
+        )  # Load related products efficiently
         .order_by("-created_at")[:5]
     )
-    # reviews = Review.objects.filter(user=request.user).select_related("product")
-    return render(request, "user_profile.html", {"orders": orders})
+    # reviews = review.objects.filter(user=request.user).select_related("product")
+    reviews = (
+        review.objects.filter(user = request.user)
+        .select_related(
+            "product"
+        )
+        .order_by("created_at")
+        )
+    context = {
+        "orders": orders,
+        "reviews": reviews,
+    }
+    return render(request, "user_profile.html", context)
+
 
 @login_required
 def edit_profile(request):

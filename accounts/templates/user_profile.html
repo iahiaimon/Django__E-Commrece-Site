@@ -63,18 +63,22 @@
         <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg md:col-span-2">
             <h4 class="text-lg font-semibold mb-3 text-gray-800 dark:text-white">Your Product Reviews</h4>
             {% if reviews %}
-            <ul class="divide-y divide-gray-300 dark:divide-gray-600">
+            <div
+                class="space-y-4 rounded-lg grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mx-auto">
                 {% for review in reviews %}
-                <li class="py-2">
-                    <p class="font-semibold text-gray-800 dark:text-white">{{ review.product.name }}</p>
-                    <p class="text-gray-600 dark:text-gray-300 text-sm italic">"{{ review.comment }}"</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Rated: {{ review.rating }}/5 - {{
-                        review.created_at|date:"M d, Y" }}</p>
-                </li>
+                <div class="p-4 bg-gray-600 text-white rounded-lg shadow-sm">
+                    <div class="flex justify-between items-center mb-1">
+                        <p class="font-bold">{{ review.user.get_full_name }}</p>
+                        <span class="text-sm font-medium">Rated: {{ review.rating }}/5</span>
+                    </div>
+                    <p> <span class="font-bold
+                    ">Review:</span> {{ review.reviews }}</p>
+                    <p class="text-sm mt-2">{{ review.created_at|date:"M d, Y H:i" }}</p>
+                </div>
                 {% endfor %}
-            </ul>
+            </div>
             {% else %}
-            <p class="text-sm text-gray-500">You haven't left any reviews yet.</p>
+            <p class="text-sm ">You haven't left any reviews yet.</p>
             {% endif %}
         </div>
     </div>

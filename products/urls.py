@@ -11,7 +11,5 @@ urlpatterns = [
 
     path('category/<slug:slug>/', views.category_products, name='category_products'),
     path('product_details/<slug:slug>/' , views.product_details , name="product_details"),
-    # path('review' , views.user_review , name="review"),
-
 
 ]

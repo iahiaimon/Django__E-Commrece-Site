@@ -114,7 +114,9 @@ def payment(request):
 
     if not order:
         return redirect("home")
-
+    print(settings.SSLCOMMERZ_IS_SANDBOX)
+    print(settings.SSLCOMMERZ_STORE_ID)
+    print(settings.SSLCOMMERZ_STORE_PASS)
     mypayment = SSLCSession(
         sslc_is_sandbox=settings.SSLCOMMERZ_IS_SANDBOX,
         sslc_store_id=settings.SSLCOMMERZ_STORE_ID,

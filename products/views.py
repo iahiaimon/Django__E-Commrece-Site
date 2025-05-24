@@ -40,49 +40,40 @@ def home(request):
     return render(request, "home.html", context=context)
 
 
-def category_products(request, category_slug):
-    category = get_object_or_404(category, slug=category_slug)
+def category_products(request, slug):
+    categoris = get_object_or_404(category, slug=slug)
 
-    products = product.objects.filter(category=category)
+    products = product.objects.filter(categoris=categoris)
 
-    paginator = Paginator(products, 6)
-    page = request.GET.get("page")
-    paged_products = paginator.get_page(page)
+    # paginator = Paginator(products, 6)
+    # page = request.GET.get("page")
+    # paged_products = paginator.get_page(page)
 
     context = {
-        "products": paged_products,
-        "category": category,
+        # "products": paged_products,
+        "products": products,
+        "category": categoris,
     }
     return render(request, "category.html", context)
 
 
-# def product_details(request, slug):
-#     products = get_object_or_404(product, slug=slug)
-#     context = {
-#         "products": products,
-#     }
-
-#     return render(request, "product_details.html", context=context)
-
-
 def product_details(request, slug):
-    product_obj = get_object_or_404(product, slug = slug)
-    # reviews = review.objects.filter(product=product_obj).order_by("-created_at")
-    reviews = review
+    product_obj = get_object_or_404(product, slug=slug)
+    reviews = review.objects.filter(product=product_obj).order_by("-created_at")
 
     form = ReviewForm()
 
     if request.method == "POST" and request.user.is_authenticated:
         form = ReviewForm(request.POST)
         if form.is_valid():
-            review = form.save(commit=False)
-            review.user = request.user
-            review.product = product_obj
-            review.save()
+            reviews = form.save(commit=False)
+            reviews.user = request.user
+            reviews.product = product_obj
+            reviews.save()
             return redirect("product_details", slug=slug)
 
     context = {
-        "product": product_obj,
+        "products": product_obj,
         "reviews": reviews,
         "form": form,
     }
