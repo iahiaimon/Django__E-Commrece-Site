@@ -65,10 +65,8 @@ def user_login(request):
         user = authenticate(request, email=email, password=password)
         if not user:
             messages.error(request, "Invalid username or password")
-            print("Invalid username or password")
         elif not user.is_verified:
             messages.error(request, "Your email is not verified")
-            print("Your email is not verified")
         else:
             login(request, user)
             messages.success(request, "You have logged in successfully")
