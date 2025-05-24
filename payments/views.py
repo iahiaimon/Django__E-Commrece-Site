@@ -19,6 +19,8 @@ def place_order(request):
     # Get cart
     try:
         if request.user.is_authenticated:
+            global my_user
+            my_user = request.user
             cart = Cart.objects.get(user=request.user)
         else:
             cart = Cart.objects.get(session_id=get_session_key(request))
@@ -89,7 +91,7 @@ def place_order(request):
 
             # Redirect based on payment method
             if payment_option == "cash":
-                return redirect("order_complete")
+                return redirect("home")
             elif payment_option == "sslcommerz":
                 return redirect("payment")
 
@@ -114,18 +116,19 @@ def payment(request):
 
     if not order:
         return redirect("home")
-    print(settings.SSLCOMMERZ_IS_SANDBOX)
-    print(settings.SSLCOMMERZ_STORE_ID)
-    print(settings.SSLCOMMERZ_STORE_PASS)
     mypayment = SSLCSession(
-        sslc_is_sandbox=settings.SSLCOMMERZ_IS_SANDBOX,
-        sslc_store_id=settings.SSLCOMMERZ_STORE_ID,
-        sslc_store_pass=settings.SSLCOMMERZ_STORE_PASS,
+        # sslc_is_sandbox=settings.SSLCOMMERZ_IS_SANDBOX,
+        # sslc_store_id=settings.SSLCOMMERZ_STORE_ID,
+        # sslc_store_pass=settings.SSLCOMMERZ_STORE_PASS,
+
+        sslc_is_sandbox=True,
+        sslc_store_id="sbgro682b412830714",
+        sslc_store_pass="sbgro682b412830714@ssl",
     )
 
     # ✅ Use a named URL pattern for status (make sure it's defined in urls.py)
     status_url = request.build_absolute_uri(reverse("payment_status"))
-
+    print("this is  status url ", status_url)
     mypayment.set_urls(
         success_url=status_url,
         fail_url=status_url,
@@ -194,10 +197,7 @@ def payment(request):
             + str(response_data)
         )
 
-    # Otherwise redirect to the payment gateway
-    return redirect(
-        response_data[" https://sandbox.sslcommerz.com/gwprocess/v3/api.php"]
-    )
+    return redirect(response_data["GatewayPageURL"])
 
 
 @csrf_exempt
@@ -208,10 +208,10 @@ def payment_status(request):
             val_id = payment_data["val_id"]
             tran_id = payment_data["tran_id"]
 
-            order = Order.objects.filter(user=request.user).last()
+            order = Order.objects.filter(user=my_user).last()
 
             payment = Payment.objects.create(
-                user=request.user,
+                user=my_user,
                 payment_id=val_id,
                 payment_method="SSLCommerz",
                 amount_paid=order.order_total,
@@ -223,7 +223,7 @@ def payment_status(request):
             order.save()
 
             # CartItems will be automatically deleted
-            Cart.objects.filter(user=request.user).delete()
+            Cart.objects.filter(user=my_user).delete()
 
             context = {
                 "order": order,
