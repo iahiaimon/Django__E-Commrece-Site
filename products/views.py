@@ -43,15 +43,15 @@ def home(request):
 def category_products(request, slug):
     categoris = get_object_or_404(category, slug=slug)
 
-    products = product.objects.filter(categoris=categoris)
+    products = product.objects.filter(category=categoris)
 
-    # paginator = Paginator(products, 6)
-    # page = request.GET.get("page")
-    # paged_products = paginator.get_page(page)
+    paginator = Paginator(products, 6)
+    page = request.GET.get("page")
+    paged_products = paginator.get_page(page)
 
     context = {
-        # "products": paged_products,
-        "products": products,
+        "products": paged_products,
+        # "products": products,
         "category": categoris,
     }
     return render(request, "category.html", context)

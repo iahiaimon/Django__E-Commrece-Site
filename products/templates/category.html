@@ -5,18 +5,18 @@
 <div class="categories">
     <div class="bg-black py-10 px-6 text-white font-sans">
         <h1 class="text-4xl font-bold text-center mb-10">
-            <span class="text-white">Keep calm</span> <span class="text-yellow-400">and</span> ride your bike
+            <span class="text-white">All</span> <span class="text-yellow-400">{{ category.name }}</span> 
         </h1>
 
 
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mx-auto">
-            {% for categories in category %}
+            {% for product in products %}
 
             <!-- Product Card -->
             <div class="bg-zinc-900 rounded-2xl border border-yellow-400 p-4 flex flex-col justify-between">
 
-                {% if categories.is_new %}
+                {% if product.is_new %}
                 <span class="bg-yellow-600 text-white text-xs font-bold px-3 py-1 mb-2 rounded-lg w-[185px] z-10">
                     🆕 New Arrival**
                 </span>
@@ -24,8 +24,8 @@
 
 
                 <!-- Product Image -->
-                {% if categories.product_image.first %}
-                <img src="{{ products.product_image.first.image.url }}" alt="{{ products.name }}"
+                {% if product.product_image.first %}
+                <img src="{{ product.product_image.first.image.url }}" alt="{{ products.name }}"
                     class="w-full h-40 object-contain mb-3 hover:scale-105" />
                 {% else %}
                 <div class="w-full h-40 bg-gray-700 flex items-center justify-center text-gray-300">No Image</div>
@@ -33,32 +33,32 @@
 
                 <!-- Product Info -->
                 <div class="mb-2">
-                    <p class="text-sm text-gray-400 font-semibold my-1">{{ products.category.name }} </p>
-                    <h3 class="font-semibold text-lg font-bold ">{{ products.name }}</h3>
-                    <p class="text-sm text-gray-300 mt-2">{{ products.description|slice:":200" }}
+                    <p class="text-sm text-gray-400 font-semibold my-1">{{ product.category.name }} </p>
+                    <h3 class="font-semibold text-lg font-bold ">{{ product.name }}</h3>
+                    <p class="text-sm text-gray-300 mt-2">{{ product.description|slice:":200" }}
                         ..... <span class="font-semibold text-md">more</span></p>
                     <div class="mt-4">
-                        <h5 class="mt-1 font-semibold">Available : {{ products.stock }} items </h5>
+                        <h5 class="mt-1 font-semibold">Available : {{ product.stock }} items </h5>
                         <!-- <p class="text-sm text-gray-300 mt-1">{{ products.available }} </p> -->
-                        <h5 class="mt-1 font-semibold">Rating : {{ products.rating }} </h5>
+                        <h5 class="mt-1 font-semibold">Rating : {{ product.rating }} </h5>
                         <!-- <p class="font-bold mt-2 ">Price : {{ products.price }} BDT</p> -->
-                        {% if products.discount_parcentage %}
+                        {% if product.discount_parcentage %}
                         <!-- <p class="text-sm text-red-600 font-semibold">
                             {{ products.discount_parcentage }}% OFF
                         </p> -->
                         <p class="font-bold">Price :
                             <span class="line-through font-bold my-2 ">
-                                {{ products.price }}
+                                {{ product.price }}
                             </span>
                             BDT
                         </p>
                         <p>
                             <span class="text-yellow-400 font-bold my-2">
-                                New Price : {{ products.final_price|floatformat:2 }} BDT
+                                New Price : {{ product.final_price|floatformat:2 }} BDT
                             </span>
                         </p>
                         {% else %}
-                        <p class="text-white font-bold mt-2">₹{{ products.price }}</p>
+                        <p class="text-white font-bold mt-2">₹{{ product.price }}</p>
                         {% endif %}
                     </div>
                 </div>
@@ -66,12 +66,12 @@
 
                 <div class="card_button flex justify-between gap-6">
 
-                    <a href="{% url 'add_to_cart' products.id %}"
+                    <a href="{% url 'add_to_cart' product.id %}"
                         class="bg-yellow-400 text-black font-semibold w-full mt-3 py-2 rounded-lg hover:bg-yellow-600 flex justify-center items-center gap-2">
                         Add to Cart
                     </a>
 
-                    <a href="{% url 'product_details' products.slug %}"
+                    <a href="{% url 'product_details' product.slug %}"
                         class="bg-blue-400 text-black font-semibold w-full mt-3 py-2 rounded-lg hover:bg-blue-500 flex justify-center items-center gap-2">
                         Details
                     </a>
