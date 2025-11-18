@@ -43,7 +43,7 @@ class product(models.Model):
         super().save(*args , **keyargs)
     
     def __str__(self):
-        return f"{self.id}--{self.name}"
+        return f"{self.id}--{self.name}--{self.category}"
 
 
 class product_image(models.Model):

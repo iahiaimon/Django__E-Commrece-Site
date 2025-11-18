@@ -60,21 +60,21 @@
 
                             <li>
                                 <a class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                                    href="#">
+                                    href="{% url 'category_products' 'bikes' %}">
                                     Bikes
                                 </a>
                             </li>
 
                             <li>
                                 <a class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                                    href="#">
+                                    href="{% url 'category_products' 'safety-kits' %}">
                                     Safety Kits
                                 </a>
                             </li>
 
                             <li>
                                 <a class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                                    href="#">
+                                    href="{% url 'category_products' 'accessories' %}">
                                     Accessories
                                 </a>
                             </li>
@@ -195,16 +195,16 @@
             <div>
                 <h2 class="text-xl font-semibold mb-4">Follow Us</h2>
                 <div class="flex space-x-4">
-                    <a href="https://www.facebook.com/iahia.imon.18" class="hover:text-blue-500" aria-label="Facebook">
+                    <a target="_blank" href="https://www.facebook.com/iahia.imon.18" class="hover:text-blue-500" aria-label="Facebook">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a href="https://x.com/Iahia_Imon" class="hover:text-blue-400" aria-label="Twitter">
+                    <a target="_blank" href="https://x.com/Iahia_Imon" class="hover:text-blue-400" aria-label="Twitter">
                         <i class="fab fa-twitter"></i>
                     </a>
-                    <a href="https://www.instagram.com/iahia206/" class="hover:text-pink-500" aria-label="Instagram">
+                    <a target="_blank" href="https://www.instagram.com/iahia206/" class="hover:text-pink-500" aria-label="Instagram">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="https://www.linkedin.com/in/iahia-imon-17654b331/" class="hover:text-blue-600"
+                    <a target="_blank" href="https://www.linkedin.com/in/iahia-imon-17654b331/" class="hover:text-blue-600"
                         aria-label="LinkedIn">
                         <i class="fab fa-linkedin-in"></i>
                     </a>
@@ -213,7 +213,7 @@
 
         </div>
 
-        <div class="bg-gray-700 text-center py-4 text-sm">
+        <div class="text-center py-4 text-sm">
             &copy; {% now "Y" %} FeelYourBike. All rights reserved. || Iahia
         </div>
     </footer>
@@ -233,7 +233,7 @@
         toastr["{{ message.tags }}"]("{{ message|escapejs }}");
         {% endfor %}
         {% endif %}
-        
+
     </script>
 
 </body>
